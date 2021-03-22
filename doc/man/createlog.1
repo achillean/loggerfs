@@ -1,0 +1,23 @@
+.TH "CREATELOG" 1
+.SH NAME
+createlog \- An interactive script that appends a \<log\> entry to the
+.B logs.xml
+file after prompting for all the properties required to describe a loggerfs virtual file.
+.SH SYNOPSIS
+.B createlog
+.SH DESCRIPTION
+prompts the user for the various properties of a \<log\> entry in
+.B logs.xml.
+  After receiving such options as the LoggerFS log file name and various database options (host, port, username, password), a \<log\> entry is appended to the
+.B logs.xml
+file.  This script does not currently support command line arguments.
+.SH "FILES"
+.TP
+.I /etc/loggerfs/logs.xml
+Configures the log files created by .B loggerfs.
+.SH "SEE ALSO"
+.B loggerfs-reload(1)
+.SH REPORTING BUGS
+Please visit http://portal.itauth.com to report any bugs.
+.SH AUTHOR
+John Matherly <jmath@itauth.com>

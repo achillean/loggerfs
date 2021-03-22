@@ -1,0 +1,73 @@
+============================================
+loggerfs
+============================================
+
+Overview
+-----------------------------
+loggerfs is a fuse-based virtual file system that automatically parses
+log files and sends that information to a defined database. I created
+this project because I:
+
+- was tired of log parsers that needed to be called periodically
+- needed an easy way to organize log files from multiple machines and
+  be able to sort/ analyze them
+- wanted a solution that wouldn't require a lot of system resources
+- only had limited disk space on the machine
+
+loggerfs addresses both of those problems because it's efficient at parsing
+log files (directly intercepts calls to the file system) and allows data
+to be efficiently stored/ analyzed in an offsite database. I currently only
+support the PostgreSQL database, but will add support for MySQL if anybody
+wants it. (email me) The project itself is written in C++ and uses the fuse
+library to create the virtual file system. If you're also working on a fuse
+module, and would like to have a C++ interface, checkout the fusexx.hpp file.
+Because there wasn't a nice C++ fuse binding I created my own that's pretty
+straight-forward.
+
+Installation
+-----------------------------
+
+Dependencies:
+- libxml2
+- fuse (http://fuse.sf.net)
+- PostgreSQL support: libpq, libpqxx (http://www.pqxx.org)
+- MySQL support: libmysqlclient
+
+Quick Instructions (as root):
+./configure
+make
+make install
+
+Configuration
+-----------------------------
+There is only 1 file that you absolutely need to edit, and that is:
+
+/usr/local/etc/loggerfs/logs.xml
+(or wherever you installed loggerfs)
+
+It contains a listing of all the log files that you'll want to have in the
+virtual file system. By default there's an entry for an apache log file
+that could contain either the apache_combined or the apache_common formats.
+But you need to make sure that the database name, username and password 
+correspond to your server settings! loggerfs will create all the tables it
+requires, but you need to provide it with valid access information.
+
+Execution
+-----------------------------
+To start the loggerfs virtual file system, create a mount point and mount
+the file system (as root):
+
+mkdir /var/loggerfs
+/usr/local/bin/loggerfs /var/loggerfs
+
+If you change the configuration files after you've mounted the file system,
+you will need to call the 'loggerfs-reload' script. That tells loggerfs
+that the configuration files have changed and need to be reloaded.
+
+Supported Log Formats
+-----------------------------
+- Apache combined
+- Apache common
+- Syslog
+- Squid 2
+- PostgreSQL

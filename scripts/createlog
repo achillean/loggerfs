@@ -1,0 +1,125 @@
+#!/bin/bash
+#
+# createlog [logs.xml location]
+# Asks the user for the log information, formats his/ her input and then puts it
+# into the 'logs.xml' file.
+# John C. Matherly (jmath at itauth dot com)
+
+# Default to using the /usr/local location
+LOGS="/usr/local/etc/loggerfs/logs.xml"
+
+# Use a user-defined location if given as first argument
+if [ $# -eq 1 ]; then
+	LOGS=$1
+fi
+
+# Check to see if the log file exists
+if [ ! -f $LOGS ]; then
+	echo "Error: Couldn't find the log file '$LOGS'"
+	echo "Try specifying a location: createlog <logs.xml location>"
+	exit 1
+fi
+
+logname=""
+server=""
+database=""
+table=""
+username=""
+password=""
+
+# Only supports PostgreSQL currently
+# Change this to allow the user to input the database
+# software once others are supported.
+software="pgsql"
+
+# Log name
+while [[ $logname == "" ]];
+do
+	echo -n "Log filename (ex. auth.log): "
+	read logname
+done
+
+# Server
+echo -n "Database Server: [localhost] "
+read server
+if [[ $server == "" ]]; then
+	server="localhost"
+fi
+
+# Database
+while [[ $database == "" ]];
+do
+	echo -n "Database: "
+	read database
+done
+
+# Table
+while [[ $table == "" ]];
+do
+	echo -n "Table: "
+	read table
+done
+
+# Username
+echo -n "Username: [postgres] "
+read username
+if [[ $username == "" ]]; then
+	username="postgres"
+fi
+
+# Password
+echo -n "Password: "
+read -s password
+
+# Show overview
+echo " "
+echo "Review the information:"
+echo "-----------------------"
+echo "Log name:   $logname"
+echo "Server:     $server"
+echo "Database:   $database"
+echo "Table:      $table"
+echo "Username:   $username"
+if [[ $password == "" ]]; then
+	echo "Password:   <empty>"
+else
+	echo "Password:   $password"
+fi
+
+answer=""
+while [ "$answer" != "yes" ] && [ "$answer" != "no" ];
+do
+	echo -n "Is this information correct? (yes/ no) "
+	read answer
+done
+
+# Exit if the info isn't correct
+if [[ $answer == "no" ]]; then
+	exit 1
+fi
+
+echo "Adding new log entry to configuration file"
+TMP="/tmp/.loggerfs-createlog"
+rm -f $TMP
+sed -e '/<\/logs>/d' $LOGS > $TMP
+echo "	<log>" >> $TMP
+echo "		<location>$logname</location>" >> $TMP
+echo "		<database-software>$software</database-software>" >> $TMP
+echo "		<database>$database</database>" >> $TMP
+echo "		<server>$server</server>" >> $TMP
+echo "		<table>$table</table>" >> $TMP
+echo "		<username>$username</username>" >> $TMP
+echo "		<password>$password</password>" >> $TMP
+echo "	</log>" >> $TMP
+echo "</logs>" >> $TMP
+
+mv -f $TMP $LOGS
+if [ $? -ne 0 ]; then
+	echo "Aborting: Please make sure you have write permissions to the file '$LOGS'"
+	echo "If you installed the logs.xml file in a different location, please specify"
+	echo "that as the first argument:"
+	echo "Usage: createlog <logs.xml location>"
+	exit 1
+fi
+
+echo "Please run the program 'loggerfs-reload' to let loggerfs know of the configuration changes"

@@ -1,0 +1,42 @@
+#!/bin/sh
+#
+# loggerfs-reload
+# Reloads the loggerfs configuration files schemas.xml and logs.xml .
+# John C. Matherly (jmath at itauth dot com)
+
+# If no argument was given then try to guess what mount point
+if [ $# -eq 0 ]; then
+	# See if multiple loggerfs file systems are mounted
+	NUM_LOGGERFS=`mount | grep -c loggerfs`
+	if [ $NUM_LOGGERFS -gt 1 ]; then
+		echo "Error: More than one mount point found for loggerfs."
+		echo "Please specify which mount point to use"
+		echo ""
+		echo "Usage: loggerfs-reload [mount point]"
+		echo "If no mount point is specified, the script will try to automatically"
+		echo "determine the location where loggerfs is mounted."
+		
+		exit 1
+	elif [ $NUM_LOGGERFS -eq 0 ]; then
+		echo "Error: loggerfs doesn't seem to be mounted. Try specifying the location."
+		echo ""
+		echo "Usage: loggerfs-reload [mount point]"
+		echo "If no mount point is specified, the script will try to automatically"
+		echo "determine the location where loggerfs is mounted."
+		
+		exit 1
+	fi
+	
+	# Try to determine which mount point loggerfs is mounted on
+	MOUNT=`mount | grep loggerfs | sed -e 's/.*on //' -e 's/ .*//'`
+	echo "Found loggerfs mounted on $MOUNT"
+elif [ $# -eq 1 ]; then
+	MOUNT=$1
+else
+	echo "Usage: loggerfs-reload [mount point]"
+	echo "If no mount point is specified, the script will try to automatically"
+	echo "determine the location where loggerfs is mounted."
+fi
+
+echo "Reloading loggerfs"
+cat "$MOUNT/.refresh"

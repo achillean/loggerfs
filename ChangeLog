@@ -1,0 +1,31 @@
+2007-10-09	John C. Matherly	<jmath@itauth.com>
+* src/loggerfs.hpp, src/loggerfs.cpp, src/config.hpp, src/config.cpp:
+  added the ability to specify the <owner> for a file
+* src/main.cpp: fixed a bug w/ not passing cmdline arguments
+
+2007-07-15	John C. Matherly	<jmath@itauth.com>
+* src/loggerfs.hpp, src/loggerfs.cpp: added PostgreSQL connection caching,
+  parser now splits multi-line buffer into single lines for regex parsing
+
+2007-07-13	John C. Matherly	<jmath@itauth.com
+
+* src/loggerfs.hpp, src/loggerfs.cpp: added MySQL support
+* configure.in: improved detection of PostgreSQL and MySQL libraries,
+  added --with-postgresql and --with-mysql configure flags if the user
+  wants to explicitly enable/ disable the resepective database support
+  for performance reasons
+
+2007-07-10	John C. Matherly	<jmath@itauth.com>
+
+* scripts/createlog: added a shell script that asks for information about the
+  new log file, creates the corresponding XML markup and puts it into the
+  logs.xml configuration file
+* src/loggerfs.hpp, src/loggerfs.cpp: cleaned up PREFIX code
+
+2007-07-09	John C. Matherly	<jmath@itauth.com>
+
+* src/loggerfs.hpp: changed formatTables to take map references as parameters
+* src/loggerfs.cpp: - added support for reloading configuration files
+                    - fixed a bug where PREFIX was equal to "NONE"
+* scripts/loggerfs-reload: added a shell script that reloads the loggerfs
+  configuration files

@@ -1,0 +1,34 @@
+.TH "LOGGERFS" 1
+.SH NAME
+loggerfs \- Mount the FUSE-based LoggerFS file system
+.SH SYNOPSIS
+.B loggerfs
+[-o fuse-options] mountpoint
+.SH DESCRIPTION
+.B loggerfs
+mounts the FUSE-based LoggerFS filesystem.  It works by using a
+database backend as storage; as single lines are written to LoggerFS files,
+the line is processed and stored according to the LoggerFS configuration files.
+.SH OPTIONS
+.TP
+.B \-o	<FUSE Option>
+Allows you to specify a FUSE option, such as allow_other.
+.SH "FILES"
+.TP
+.I /etc/loggerfs/logs.xml
+Configures the log files created by .B loggerfs.
+.TP
+.I /etc/loggerfs/schemas.xml
+Configures the database and regular expressions used by loggerfs.
+.SH "SEE ALSO"
+.B logs.xml(1)
+.br
+.B schemas.xml(1)
+.br
+.B loggerfs-reload(1)
+.SH REPORTING BUGS
+Please visit http://portal.itauth.com to report any bugs.
+.SH AUTHORS
+John Matherly <jmath@itauth.com>
+.br
+Tim Beck <tbeck@itauth.com>

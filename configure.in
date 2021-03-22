@@ -1,0 +1,117 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ(2.61)
+AC_INIT(loggerfs, 0.5, jmath@itauth.com)
+AM_CONFIG_HEADER(config.h)
+AM_INIT_AUTOMAKE
+AC_CONFIG_SRCDIR([src/schema.hpp])
+
+if [[ $prefix == "NONE" ]]; then
+	prefix="/usr/local"
+fi
+AC_DEFINE_UNQUOTED([PREFIX], ["$prefix"], [Installation directory])
+
+# Checks for programs.
+AC_PROG_CXX
+AC_PROG_CC
+
+#######################################
+# Checks for PostgreSQL Support
+#######################################
+AC_ARG_WITH([postgresql],
+	[AS_HELP_STRING([--with-postgresql],
+		[support connecting to PostgreSQL databases @<:@default=check@:>@])],
+	[],
+    [with_postgresql=check])
+
+AS_IF([test "x$with_postgresql" != xno],
+	[
+		AC_CHECK_LIB([pq], [PQexec],
+			[],
+			[if test "x$with_postgresql" != xcheck; then
+				AC_MSG_FAILURE(
+				[--with-postgresql was given, but test for libpq failed])
+			fi]
+		 )
+		 AC_CHECK_LIB([pqxx], [PQenv2encoding],
+			[
+				AC_DEFINE([WITH_POSTGRESQL], [1], [Define if you want PostgreSQL support])
+				LIBS="$LIBS -lpqxx"
+			],
+			[if test "x$with_postgresql" != xcheck; then
+				AC_MSG_FAILURE(
+				[--with-postgresql was given, but test for libpqxx failed])
+			fi]
+		 )
+	])
+
+#######################################
+# Checks for MySQL Support
+#######################################
+AC_ARG_WITH([mysql],
+	[AS_HELP_STRING([--with-mysql],
+		[support connecting to MySQL databases @<:@default=check@:>@])],
+	[],
+    [with_mysql=check])
+
+AC_CHECK_PROG([MYSQL_CONF_LIBS], [mysql_config], [`mysql_config --libs`],[""])
+LIBS="${LIBS} ${MYSQL_CONF_LIBS}"
+
+AS_IF([test "x$with_mysql" != xno],
+	[
+		AC_CHECK_LIB([mysqlclient], [mysql_init],
+			[
+				AC_DEFINE([WITH_MYSQL], [1], [Define if you want MySQL support])
+				CPPFLAGS="${CPPFLAGS} `mysql_config --cflags`"
+         	],
+			[if test "x$with_mysql" != xcheck; then
+				AC_MSG_FAILURE(
+				[--with-mysql was given, but test for libmysqlclient failed])
+			fi]
+		 )
+	])
+
+#######################################
+# Checks for always required libraries.
+#######################################
+
+# Boost Regex Library
+AC_CHECK_LIB([boost_regex], [regexecA], [], [AC_MSG_ERROR([
+Unable to locate the regexecA function in the boost_regex library. Please make
+sure that you have the boost_regex library installed.])])
+
+# Fuse
+AC_CHECK_LIB([fuse], [fuse_main_real], [], [AC_MSG_ERROR([
+Unable to locate the fuse_main_real function. Please make sure that you have
+the fuse library installed.])])
+
+# rt
+AC_CHECK_LIB([rt], [sched_setscheduler], [], [AC_MSG_ERROR([
+Unable to locate the sched_setscheduler function. Please make sure that you have
+the rt library installed.])])
+
+# libxml2
+AC_CHECK_LIB([xml2], [xmlParseFile], [], [AC_MSG_ERROR([
+Unable to locate the xmlParseFile function. Please make sure that you have
+the xml2 library installed.])])
+
+# Checks for header files.
+AC_CHECK_HEADERS([fcntl.h unistd.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_HEADER_STDBOOL
+AC_C_CONST
+AC_TYPE_UID_T
+AC_TYPE_MODE_T
+AC_TYPE_OFF_T
+AC_TYPE_SIZE_T
+
+# Checks for library functions.
+AC_FUNC_CHOWN
+AC_HEADER_STDC
+AC_FUNC_UTIME_NULL
+AC_CHECK_FUNCS([ftruncate gethostname memset mkdir rmdir utime])
+
+AC_CONFIG_FILES([Makefile src/Makefile])
+AC_OUTPUT

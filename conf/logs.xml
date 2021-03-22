@@ -1,0 +1,35 @@
+<logs>
+	<!-- Sample PostgreSQL log files -->
+	<log>
+		<location>apache_access.log</location>
+		<schemas>apache_combined,http_common</schemas>
+		<database-software>pgsql</database-software>
+		<database>loggerfs</database>
+		<table>apache</table>
+		<server>localhost</server>
+		<username>postgres</username>
+		<password></password>
+		<owner>root</owner>
+	</log>
+	<log>
+		<location>auth.log</location>
+		<schemas>all</schemas>
+		<database-software>pgsql</database-software>
+		<database>loggerfs</database>
+		<table>authlog</table>
+		<server>localhost</server>
+		<username>postgres</username>
+		<password></password>
+	</log>
+	<!-- Sample MySQL log files -->
+	<log>
+		<location>syslog</location>
+		<schemas>all</schemas>
+		<database-software>mysql</database-software>
+		<database>loggerfs</database>
+		<table>syslog</table>
+		<server>localhost</server>
+		<username>root</username>
+		<password></password>
+	</log>
+</logs>

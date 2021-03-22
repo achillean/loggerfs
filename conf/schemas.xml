@@ -1,0 +1,32 @@
+<schemas>
+	<schema>
+		<name>all</name>
+		<regex>(.*)</regex>
+		<columns>text</columns>
+	</schema>
+	<schema>
+		<name>apache_combined</name>
+		<regex>(\S+) (\S+) (\S+) \[.+\] "(.+)"+ (\S+) (\S+) "(\S+)" "(.+)"$</regex>
+		<columns>dst_ip,logname,authname,request,http_status,bytes,referer,user_agent</columns>
+	</schema>
+	<schema>
+		<name>http_common</name>
+		<regex>(\S+) (\S+) (\S+) \[.+\] "(.+)"+ (\S+) (\S+)$</regex>
+		<columns>dst_ip,logname,authname,request,http_status,bytes</columns>
+	</schema>
+	<schema>
+		<name>squid_native</name>
+		<regex>^\S+ +(\d+) (\S+) (\S+)\/(\d+) (\d+) (\S+ \S+) (\S+) (\S+)\/(\S+) (\S+)$</regex>
+		<columns>elapsed,src_ip,result_code,http_status,bytes,request,authname,hierarchy_code,dst_ip,type</columns>
+	</schema>
+	<schema>
+		<name>postgresql</name>
+		<regex>(\S+):  *(.*)$</regex>
+		<columns>event,message</columns>
+	</schema>
+	<schema>
+		<name>syslog</name>
+		<regex>^\S+  *\d{1,2} \d+:\d+:\d+ (\S+) ([a-zA-Z\-\/\.]+).*?:  *(.*)$</regex>
+		<columns>hostname,process,message</columns>
+	</schema>
+</schemas>

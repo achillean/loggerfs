@@ -1,0 +1,23 @@
+.TH "LOGGERFS-RELOAD" 1
+.SH NAME
+loggerfs-reload \- Reloads the LoggerFS configuration files
+.SH SYNOPSIS
+.B loggerfs-reload
+mountpoint
+.SH DESCRIPTION
+.B loggerfs-reload
+tells loggerfs to refresh the loggerfs mountpoint to include changes to the configuration files.  If no path is specified,
+.B loggerfs-reload
+will try to detect mounted LoggerFS file systems.
+.SH OPTIONS
+.TP
+.B mountpoint
+The path to the LoggerFS mount.
+.SH "SEE ALSO"
+.B loggerfs(1)
+.br
+.B loggerfs-recreate(1)
+.SH REPORTING BUGS
+Please visit http://portal.itauth.com to report any bugs.
+.SH AUTHOR
+John Matherly <jmath@itauth.com>

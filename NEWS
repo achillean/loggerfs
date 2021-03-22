@@ -1,0 +1,64 @@
+loggerfs version 0.3 released (2007/07/22)
+---------------------------------------
+After further testing I've added to loggerfs the ability to cache PostgreSQL
+database connections. Unlike MySQL, there seems to be a signifcant overhead in
+creating a PostgreSQL database connection. I determined this by trying to
+import a 30Mb authlog file, which took ~20min to import w/out caching. After
+adding the caching function it took ~2min on my system. MySQL didn't have any
+of these problems and only required ~1min to import the entire authlog, though
+it did use ~100% CPU while PostgreSQL only used ~45% (I have a hunch the
+PostgreSQL DB on my dev machine isn't properly configured). And in order to do
+the testing, loggerfs now first splits the input buffer by newlines. That means
+you'll be able to feed existing log files into loggerfs by typing:
+
+$ cat my_current_log_file > /var/loggerfs/my_loggerfs_file
+
+Enjoy.
+
+loggerfs version 0.2 released (2007/07/14)
+---------------------------------------
+Many new features have been addded since 0.1, most notably
+I have added support for storing log files in MySQL! I've also created 
+2 simple shell scripts: createlog and loggerfs-reload. The former asks 
+you a series of questions and then creates the correct XML in the logs.xml 
+configuration file (default location is /usr/local/etc/loggerfs/logs.xml). 
+The latter script can be called to reload the configuration files
+(schema.xml and logs.xml) while the file system is mounted. Finally,
+I improved support for the Syslog format, and have added the ability to
+store PostgreSQL logs as well.
+
+loggerfs version 0.1.1 released (2007/07/09)
+---------------------------------------
+I fixed a minor bug where it wouldn't look at the right configuration
+directory if --prefix wasn't given during the ./configure step. But more
+importantly, I added the ability to reload the configuration files while
+the file system is mounted! What this means is that now you won't need to
+unmount and re-mount the file system every time you want to add/ delete
+another log file or schema. Should make using and debugging the system a
+whole lot easier. Enjoy.
+
+Initial Release (2007/07/07)
+---------------------------------------
+Today marks the first release of the loggerfs virtual file system. loggerfs
+is a fuse-based virtual FS written in C++ that allows log files of apache, 
+squid and other programs to be directly stored in a database. Instead of
+running a cronjob every few minutes/ hours/ days to process a log file,
+loggerfs listens for write-requests on the log files and automatically sends
+the new data to the PostgreSQL database. There are 2 configuration files for
+this project:
+
+- schemas.xml
+- logs.xml
+
+'schemas.xml' defines the log formats and the columns where the data will be
+stored in. 'logs.xml' contains the log files that should be created in the
+virtual file system. This means that you will need to pre-define what log files
+should be created! By default the 'logs.xml' files contains a few example log
+files for apache and syslog.
+
+The average user/ sys admin will only touch the 'logs.xml' file. If you feel
+adventurous, please write additional schemas to support additional logging
+formats (greatly appreciated).
+
+I'm sure there's a lot more I could talk about, but for now just send me an 
+email if you have any problems/ questions/ suggestions.
